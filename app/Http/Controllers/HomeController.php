@@ -11,12 +11,14 @@ class HomeController extends Controller
     public function index()
     {
         $user = 'C4ETech';
-        $commonLinkUserNames = Tweet::select('id','searched_user', 'link_user_name', 'image')
+        $users_data = Tweet::select('id','searched_user', 'link_user_name', 'image')
+        ->where('searched_user',$user)
+        ->where('link_user_name','!=',$user)
         ->groupBy('link_user_name')
         ->havingRaw('COUNT(*) >= 2')
         ->get();
-
-    dd($commonLinkUserNames);
+        return view('welcome',compact('users_data'));
+        dd($users_data);
         $response = file_get_contents('https://api.twitterpicker.com/user/timeline?username=' . $user);
         $response = json_decode($response);
         foreach ($response as $key => $value) {
